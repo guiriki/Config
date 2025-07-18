@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  executor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gpt_executor
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - ./workspace:/mnt/workspace
+    restart: unless-stopped
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    container_name: gpt_ngrok
+    restart: unless-stopped
+    command: http --domain=known-sunny-meerkat.ngrok-free.app executor:8000
+    environment:
+      NGROK_AUTHTOKEN: 2yelcrlJAUPKGIsHw59ZD6LhoTP_7scrbYcAMNKHL9t3gQypt
+    depends_on:
+      - executor
+
